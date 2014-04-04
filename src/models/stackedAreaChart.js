@@ -39,6 +39,8 @@ nv.models.stackedAreaChart = function() {
     , cData = ['Stacked','Stream','Expanded']
     , controlLabels = {}
     , transitionDuration = 250
+    , xTicks = null
+    , yTicks = null
     ;
 
   xAxis
@@ -271,7 +273,7 @@ nv.models.stackedAreaChart = function() {
       if (showXAxis) {
         xAxis
           .scale(x)
-          .ticks( availableWidth / 100 )
+          .ticks( xTicks || (availableWidth / 100) )
           .tickSize( -availableHeight, 0);
 
         g.select('.nv-x.nv-axis')
@@ -285,7 +287,7 @@ nv.models.stackedAreaChart = function() {
       if (showYAxis) {
         yAxis
           .scale(y)
-          .ticks(stacked.offset() == 'wiggle' ? 0 : availableHeight / 36)
+          .ticks( yTicks || (stacked.offset() == 'wiggle' ? 0 : availableHeight / 36))
           .tickSize(-availableWidth, 0)
           .setTickFormat( (stacked.style() == 'expand' || stacked.style() == 'stack_percent')
                 ? d3.format('%') : yAxisTickFormat);
@@ -427,7 +429,7 @@ nv.models.stackedAreaChart = function() {
       // Update chart from a state object passed to event handler
       dispatch.on('changeState', function(e) {
 
-        if (typeof e.disabled !== 'undefined' && data.length === e.disabled.length) {
+        if (typeof e.disabled !== 'undefined') {
           data.forEach(function(series,i) {
             series.disabled = e.disabled[i];
           });
@@ -628,6 +630,17 @@ nv.models.stackedAreaChart = function() {
     return yAxis;
   };
 
+  chart.xTicks = function(_) {
+    if (!arguments.length) return xTicks;
+    xTicks = _;
+    return chart;
+  };
+
+  chart.yTicks = function(_) {
+    if (!arguments.length) return yTicks;
+    yTicks = _;
+    return chart;
+  };
 
   //============================================================
 
